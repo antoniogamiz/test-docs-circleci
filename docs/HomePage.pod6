@@ -1,0 +1,16 @@
+=begin Html
+
+Welcome to the documentation of the <a href="https://github.com/antoniogamiz/Perl6-Documentable">Perl6::Documentable</a> module.
+
+This module provides you with an easy way to document your module and generate a site without
+having to worry about HTML generation, indexing and search utilities.
+
+I recommend you to start reading <a href="/Perl6-Documentable/language.html">the language page</a> to see
+how to setup this module.
+
+If you find a problem or think some aspects should be improved, please raise an
+<a href="https://github.com/antoniogamiz/Perl6-Documentable/issues">issue</a>.
+
+=end Html
+
+# vim: expandtab softtabstop=4 shiftwidth=4 ft=perl6

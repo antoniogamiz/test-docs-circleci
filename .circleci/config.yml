@@ -5,9 +5,8 @@ variables:
     run:
       name: Run tests
       command: |
-        echo "Working! :D"
-        perl6 -e "say ':D'"
-        zef
+        zef install Perl6::Documentable
+        documentable start -v -a --topdir=docs
 
 jobs:
   test-linux:
@@ -16,9 +15,6 @@ jobs:
     steps:
       - checkout
       - *test-documentable
-      - persist_to_workspace:
-          root: ./
-          paths: html
   # docs-deploy:
   #   docker:
   #     - image: node:8.10.0
