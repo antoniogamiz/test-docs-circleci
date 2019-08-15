@@ -5,8 +5,8 @@ variables:
     run:
       name: Run tests
       command: |
-        zef install Perl6::Documentable
-        documentable start -v -a --topdir=docs
+        sudo apt-get install nodejs
+        sudo apt-get install npm
 
 jobs:
   test-linux:
