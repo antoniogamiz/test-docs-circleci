@@ -1,0 +1,54 @@
+version: 2
+
+variables:
+  test-documentable: &test-documentable
+    run:
+      name: Run tests
+      command: |
+        echo "Working! :D"
+        perl6 -e "say ':D'"
+        zef
+
+jobs:
+  test-linux:
+    docker:
+      - image: jjmerelo/test-perl6
+    steps:
+      - checkout
+      - *test-documentable
+      - persist_to_workspace:
+          root: ./
+          paths: html
+  # docs-deploy:
+  #   docker:
+  #     - image: node:8.10.0
+  #   steps:
+  #     - checkout
+  #     - attach_workspace:
+  #         at: ./
+  #     - run:
+  #         name: Install and configure dependencies
+  #         command: |
+  #           npm install -g --silent gh-pages@2.0.1
+  #           git config user.email "antoniogamiz@gmail.com"
+  #           git config user.name "ci-build"
+  #     - add_ssh_keys:
+  #         fingerprints:
+  #           - "8a:fb:97:e9:33:14:74:35:85:65:33:f5:34:22:7c:37"
+  #     - run:
+  #         name: Deploy docs to gh-pages branch
+  #         command: gh-pages --dotfiles --message "[skip ci] Updates" --dist ./html
+workflows:
+  version: 2
+  test:
+    jobs:
+      - test-linux:
+          filters:
+            branches:
+              only: master
+      # - docs-deploy:
+      #     requires:
+      #       - test-linux
+      #     filters:
+      #       branches:
+      #         only: master
