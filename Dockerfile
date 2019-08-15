@@ -1,8 +1,9 @@
 FROM registry.gitlab.com/tyil/docker-perl6:ubuntu-latest
 
-RUN apt-get update --fix-missing
-RUN apt-get install -y software-properties-common
-RUN add-apt-repository universe
+RUN apt-get update --fix-missing \
+    && apt-get install -y software-properties-common \
+    && add-apt-repository universe \
+    && apt-get install -y python-setuptools python-dev
 
 RUN apt-get install -y git-core curl build-essential openssl libssl-dev \
     && git clone https://github.com/nodejs/node.git \
