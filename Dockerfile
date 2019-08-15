@@ -1,32 +1,24 @@
-FROM node:10
+FROM registry.gitlab.com/tyil/docker-perl6:ubuntu-latest
 
-# Environment
-ENV PATH="/root/.rakudobrew/bin:/root/.rakudobrew/moar-2019.03.1/install/share/perl6/site/bin:${PATH}" \
-    PKGS="curl git perl" \
-    PKGS_TMP="curl-dev linux-headers make gcc musl-dev wget"
+RUN apt-get update --fix-missing
+RUN apt-get install -y software-properties-common
+RUN add-apt-repository universe
 
-# Basic setup, programs and init
-RUN apk update && apk upgrade \
-    && apk add --no-cache $PKGS $PKGS_TMP \
-    && git clone -b v1 https://github.com/tadzik/rakudobrew ~/.rakudobrew \
-    && echo 'export PATH=~/.rakudobrew/bin:$PATH\neval "$(/root/.rakudobrew/bin/rakudobrew init -)"' >> /etc/profile \
-    && echo 'export PATH=~/.rakudobrew/moar-2019.03.1/install/share/perl6/site/bin:$PATH\neval "$(/root/.rakudobrew/moar-2019.03.1/install/share/perl6/site/bin/rakudobrew init -)"' >> /etc/profile \
-    && cat /etc/profile \
-    && rakudobrew build moar 2019.03.1 \
-    && curl -L https://cpanmin.us | perl - App::cpanminus \
-    && cpanm Test::Harness --no-wget \
-    && git clone https://github.com/ugexe/zef.git \
-    && prove -v -e 'perl6 -I zef/lib' zef/t \
-    && perl6 -Izef/lib zef/bin/zef --verbose install ./zef \
-    && which zef \
-    && zef install Linenoise \
-    && apk del $PKGS_TMP \
-    && RAKUDO_VERSION=`sed "s/\n//" /root/.rakudobrew/CURRENT` \
-    rm -rf /root/.rakudobrew/${RAKUDO_VERSION}/src /root/zef \
-    /root/.rakudobrew/git_reference \
-    # Print this as a check (really unnecessary)
-    && rakudobrew init
+RUN apt-get install -y git-core curl build-essential openssl libssl-dev \
+    && git clone https://github.com/nodejs/node.git \
+    && cd node \
+    && ./configure \
+    && make \
+    && make install
 
-# Runtime
+# typegraph representations
+RUN apt-get --yes --no-install-recommends install graphviz
+
+# highlighter
+RUN ATOMDIR="./highlights/atom-language-perl6";  \
+    if [ -d "$$ATOMDIR" ]; then (cd "$$ATOMDIR" && git pull); \
+    else git clone https://github.com/perl6/atom-language-perl6 "$$ATOMDIR"; \
+    fi; cd highlights; npm install .; npm rebuild
+
 WORKDIR /root
-ENTRYPOINT ["perl6"]
+ENTRYPOINT ["bash"]
